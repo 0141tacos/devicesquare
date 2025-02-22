@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        {% block title %}
+        {% endblock %}
+        <link rel="stylesheet" href="stylesheet.css">
+    </head>
+    <body>
+        <!-- ヘッダー -->
+        <div class="header">
+            <h1>DeviceSquare</h1>
+            <!-- ヘッダーに表示する項目はすべてリンク付きにする -->
+            <ul>
+                <li><a href="">HOME</a></li>
+                <li><a href="">カテゴリー別</a></li>
+            </ul>
+        </div>
+        <!-- 中身 -->
+        <div class="content">
+            <!-- テンプレ化して個別に作成 -->
+            {% block content %}
+            {% endblock %}
+        </div>
+        <!-- フッター -->
+        <div class="footer">
+            <h1>DeviceSquare</h1>
+            <p>デバイス好きが集まり交流するサイト</p>
+            <ul>
+                <li>サイト運営者：taco5</li>
+            </ul>
+        </div>
+    </body>
+</html> 
