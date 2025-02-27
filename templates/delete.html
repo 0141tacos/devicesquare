@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}
+    <title>{{ post.title }}の削除</title>
+{% endblock %}
+{% block content %}
+    <form method="POST">
+        <label for="title">タイトル</label>
+        <p>{{ post.title }}</p>
+        <label for="body">内容</label>
+        <p>{{ post.body }}</p>
+        <label for="url">URL</label>
+        <p>{{ post.url }}</p>
+        <label for="created_at">作成日時</label>
+        <p>{{ post.created_at }}</p>
+        <label for="updated_at">更新日時</label>
+        <p>{{ post.updated_at }}</p>
+        <h3>この投稿を削除しますか？</h3>
+        <input type="submit" value="はい">
+        <a href="/" role="button">いいえ</a>
+    </form>
+{% endblock %}

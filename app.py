@@ -22,6 +22,9 @@ class Post(db.Model):
                 default=datetime.now(pytz.timezone('Asia/Tokyo')))
     updated_at = db.Column(db.DateTime, nullable=False,
                 default=datetime.now(pytz.timezone('Asia/Tokyo')))
+    # 論理削除フラグ
+    # 20250227時点ではCRUDの勉強のため利用しないこととする
+    delete_flag = db.Column(db.Boolean, nullable=False, default=0)
 
 # 初期画面表示のためのルーティング
 @app.route('/', methods=['GET', 'POST'])
@@ -56,3 +59,16 @@ def update(id):
         return redirect('/')
     elif request.method == 'GET':
         return render_template('update.html', post=post)
+
+# 投稿を削除するためのルーティング
+@app.route('/<int:id>/delete', methods=['GET', 'POST'])
+def delete(id):
+    post = Post.query.get(id)
+    if request.method == 'POST':
+        # 20250227時点ではCRUDの勉強のため論理削除フラグ（delete_flag）は利用しないこととする
+        # post.delete_flag = 1
+        db.session.delete(post)
+        db.session.commit()
+        return redirect('/')
+    elif request.method == 'GET':
+        return render_template('delete.html', post=post)
