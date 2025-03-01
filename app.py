@@ -6,12 +6,13 @@ import pytz
 import os
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///devicesquare.db'
 app.config['SECRET_KEY'] = os.urandom(24)
 db = SQLAlchemy(app)
 
 class Post(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    __tablename__ = 'post'
+    post_id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(50), nullable=False)
     body = db.Column(db.String(400))
     # 画像のカラムを作りたい
@@ -72,3 +73,9 @@ def delete(id):
         return redirect('/')
     elif request.method == 'GET':
         return render_template('delete.html', post=post)
+
+# 投稿の詳細画面を表示するためのルーティング
+@app.route('/<int:id>/<string:title>', methods=['GET'])
+def post_detail(id, title):
+    post = Post.query.get(id)
+    return render_template('post_detail.html', post=post)
