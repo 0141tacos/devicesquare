@@ -10,14 +10,16 @@
     {% for post in posts %}
         <!-- 20250227時点ではCRUDの勉強のため論理削除フラグは利用しない-->
         <!-- {% if post.delete_flag == 0 %} -->
+         <a href="/{{post.post_id}}/{{post.title}}">
             <article>
                 <h2>{{ post.title }}</h2>
-                <a href="/{{post.id}}/update" role="button">編集</a>
-                <a href="/{{post.id}}/delete" role="button">削除</a>
+                <a href="/{{post.post_id}}/update" role="button">編集</a>
+                <a href="/{{post.post_id}}/delete" role="button">削除</a>
                 <p>{{ post.body }}</p>
                 <p>作成日時：{{ post.created_at }}</p>
                 <p>更新日時：{{ post.updated_at }}</p>
             </article>
+        </a>
         <!-- {% endif %} -->
     {% endfor %}
 {% endblock %}
