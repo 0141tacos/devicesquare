@@ -2,14 +2,15 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         {% block title %}
         {% endblock %}
-        <link rel="stylesheet" href="stylesheet.css">
+        <link rel="stylesheet" href="{{url_for('static', filename='stylesheet.css')}}">
     </head>
     <body>
         <!-- ヘッダー -->
         <div class="header">
-            <h1>DeviceSquare</h1>
+            <h1>Device Square</h1>
             <!-- ヘッダーに表示する項目はすべてリンク付きにする -->
             <ul>
                 <li><a href="/">HOME</a></li>
@@ -33,7 +34,7 @@
         </div>
         <!-- フッター -->
         <div class="footer">
-            <h1>DeviceSquare</h1>
+            <h1>Device Square</h1>
             <p>デバイス好きが集まり交流するサイト</p>
             <ul>
                 <li>サイト運営者：taco5</li>
