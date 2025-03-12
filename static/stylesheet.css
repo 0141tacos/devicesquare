@@ -1,0 +1,22 @@
+div {
+    color: #333;
+    background-color: #ffff;
+    padding: 30px 30px;
+}
+
+div h1 {
+    font-family: "-apple-system", "BlinkMacSystemFont", sans-serif;
+    font-size: 30px;
+    font-weight: bolds;
+}
+
+.header {
+    color: #ffff;
+    background-color: #2A6E6B;
+}
+
+
+.footer {
+    color: #ffff;
+    background-color: #2A6E6B;
+}
