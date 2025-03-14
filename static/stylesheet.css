@@ -10,13 +10,28 @@ div h1 {
     font-weight: bolds;
 }
 
-.header {
-    color: #ffff;
-    background-color: #2A6E6B;
+h1, h2, h3 {
+    font-family: "-apple-system", "BlinkMacSystemFont", sans-serif;
 }
 
+.header {
+    color: #ffff;
+    background-color: #b3b3b3;
+}
+
+article {
+    border: 3px solid;
+    border-color: #b3b3b3;
+    border-radius: 8px;
+    margin: 10px 10px;
+    padding: 10px 10px;
+}
+
+.time {
+    font-size: 12px;
+}
 
 .footer {
     color: #ffff;
-    background-color: #2A6E6B;
+    background-color: #b3b3b3;
 }
