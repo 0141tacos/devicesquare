@@ -6,15 +6,24 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import pytz
 import os
+# apiを利用できるようにするためのインポート
+from api import init_api
+# dbをmodels.pyに外だししたためインポート
+from models import db, Post
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///devicesquare.db'
 app.config['SECRET_KEY'] = os.urandom(24)
-db = SQLAlchemy(app)
+
+db.init_app(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+init_api(app)
+
+# うまく動いたら削除する
+""""
 class Post(db.Model):
     __tablename__ = 'post'
     post_id = db.Column(db.Integer, primary_key=True)
@@ -42,6 +51,7 @@ class User(UserMixin, db.Model):
     # Flask-Loginでは"id"を定義しないといけないが、"user_id"としてしまったのでget_id()をオーバーライドしている
     def get_id(self):
         return str(self.user_id)
+"""
 
 # ログイン状態を管理するための関数
 @login_manager.user_loader
