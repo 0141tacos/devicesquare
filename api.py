@@ -17,7 +17,7 @@ def get_posts_json():
         "post_id" : post.post_id,
         "title" : post.title,
         "body" : post.body,
-        "url" : post.url,
+        "user_id" : post.user_id,
         "created_at" : post.created_at,
         "updated_at" : post.updated_at
     } for post in posts])
@@ -30,7 +30,6 @@ def get_users_json():
         "user_id" : user.user_id,
         "user_name" : user.user_name,
         "password" : "*" * len(user.password),
-        "favorite" : user.favorite,
         "created_at" : user.created_at
     } for user in users])
 
@@ -39,8 +38,8 @@ def get_users_json():
 def create_post(request):
     title = request.form.get('title')
     body = request.form.get('body')
-    url = request.form.get('url')
-    post = Post(title=title, body=body, url=url)
+    user_id = request.form.get('user_id')
+    post = Post(title=title, body=body, user_id=user_id)
     db.session.add(post)
     db.session.commit()
 
@@ -49,7 +48,7 @@ def create_post(request):
 def update_post(post, request):
     post.title = request.form.get('title')
     post.body = request.form.get('body')
-    post.url = request.form.get('url')
+    post.user_id = request.form.get('user_id')
     post.updated_at = datetime.now(pytz.timezone('Asia/Tokyo'))
     db.session.commit()
 

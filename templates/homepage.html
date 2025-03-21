@@ -8,8 +8,6 @@
     <h1>投稿一覧</h1>
     <a href="/create" role="button">新規投稿</a>
     {% for post in posts %}
-        <!-- 20250227時点ではCRUDの勉強のため論理削除フラグは利用しない-->
-        <!-- {% if post.delete_flag == 0 %} -->
          <a href="/{{post.post_id}}/detail/{{post.title}}">
             <article>
                 <h2>{{ post.title }}</h2>
@@ -20,6 +18,5 @@
                 <p class="time">更新日時：{{ post.updated_at }}</p>
             </article>
         </a>
-        <!-- {% endif %} -->
     {% endfor %}
 {% endblock %}

@@ -13,14 +13,11 @@ class Post(db.Model):
     # 画像のカラムを作りたい
     # いったん保留（画像の保管方法をDBにするか外部ストレージにするか決められないため）
     # image = db.Column(db.blob)
-    url = db.Column(db.String(500))
+    user_id = db.Column(db.Integer)
     created_at = db.Column(db.DateTime, nullable=False,
                 default=datetime.now(pytz.timezone('Asia/Tokyo')))
     updated_at = db.Column(db.DateTime, nullable=False,
                 default=datetime.now(pytz.timezone('Asia/Tokyo')))
-    # 論理削除フラグ
-    # 20250227時点ではCRUDの勉強のため利用しないこととする
-    delete_flag = db.Column(db.Boolean, nullable=False, default=0)
 
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
