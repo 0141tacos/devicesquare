@@ -10,5 +10,8 @@
         <label for="password">パスワード</label>
         <input type="password" name="password">
         <input type="submit" value="ログイン">
+        {% if text != None %}
+        <p>{{ text }}</p>
+        {% endif %}
     </form>
 {% endblock %}

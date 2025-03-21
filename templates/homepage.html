@@ -10,7 +10,7 @@
     {% for post in posts %}
         <!-- 20250227時点ではCRUDの勉強のため論理削除フラグは利用しない-->
         <!-- {% if post.delete_flag == 0 %} -->
-         <a href="/{{post.post_id}}/{{post.title}}">
+         <a href="/{{post.post_id}}/detail/{{post.title}}">
             <article>
                 <h2>{{ post.title }}</h2>
                 <a href="/{{post.post_id}}/update" role="button">編集</a>

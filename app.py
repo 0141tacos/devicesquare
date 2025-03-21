@@ -4,20 +4,20 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
-# apiを利用できるようにするためのインポート
-from api import init_api
-# dbをmodels.pyに外だししたためインポート
-from models import db, Post
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///devicesquare.db'
 app.config['SECRET_KEY'] = os.urandom(24)
 
+# dbをmodels.pyに外だししたためインポート
+from models import db, Post, User
 db.init_app(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+# apiを利用できるようにするためのインポート
+from api import init_api
 init_api(app)
 
 # ログイン状態を管理するための関数
@@ -42,15 +42,23 @@ def signup():
 # ログイン画面を表示するためのルーティング
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    text = None
     if request.method == 'POST':
         user_name = request.form.get('user_name')
         password = request.form.get('password')
         user = User.query.filter_by(user_name=user_name).first()
-        if check_password_hash(user.password, password):
-            login_user(user)
-            return redirect('/')
+        if user is None:
+            text = 'ユーザーが登録されていません'
+            return render_template('/login.html', text=text)
+        else:
+            if check_password_hash(user.password, password):
+                login_user(user)
+                return redirect('/')
+            elif check_password_hash(user.password, password) is False:
+                text = 'パスワードが違います'
+                return render_template('/login.html', text=text)
     else:
-        return render_template('/login.html')
+        return render_template('/login.html', text=text)
 
 @app.route('/logout')
 def logout():
@@ -59,12 +67,14 @@ def logout():
 
 # 初期画面表示のためのルーティング
 @app.route('/', methods=['GET', 'POST'])
+@login_required
 def homepage():
     posts = Post.query.all()
     return render_template('homepage.html', posts=posts)
 
 # 投稿作成画面表示のためのルーティング
 @app.route('/create', methods=['GET', 'POST'])
+@login_required
 def create():
     if request.method == 'POST':
         from api import create_post
@@ -75,6 +85,7 @@ def create():
 
 # 投稿更新画面表示のためのルーティング
 @app.route('/<int:post_id>/update', methods=['GET', 'POST'])
+@login_required
 def update(post_id):
     post = Post.query.get(post_id)
     if request.method == 'POST':
@@ -86,6 +97,7 @@ def update(post_id):
 
 # 投稿を削除するためのルーティング
 @app.route('/<int:post_id>/delete', methods=['GET', 'POST'])
+@login_required
 def delete(post_id):
     post = Post.query.get(post_id)
     if request.method == 'POST':
@@ -98,7 +110,21 @@ def delete(post_id):
         return render_template('delete.html', post=post)
 
 # 投稿の詳細画面を表示するためのルーティング
-@app.route('/<int:post_id>/<string:title>', methods=['GET'])
+@app.route('/<int:post_id>/detail/<string:title>', methods=['GET'])
+@login_required
 def post_detail(post_id, title):
     post = Post.query.get(post_id)
     return render_template('post_detail.html', post=post)
+
+# 投稿に対してお気に入り機能を使うためのルーティング
+@app.route('/<int:post_id>/<int:user_id>/favorite')
+@login_required
+def favorite(post_id, user_id):
+    from api import check_favorite, add_favorite, delete_favorite
+    if check_favorite(post_id, user_id):
+        add_favorite(post_id, user_id)
+        return redirect(url_for('post_detail'))
+    else:
+        delete_favorite(post_id, user_id)
+        return redirect(url_for('post_detail'))
+
