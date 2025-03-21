@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify
 from datetime import datetime
 import pytz
-from models import db, Post
+from models import db, Post, User
 
 api = Blueprint('api', __name__)
 
@@ -21,6 +21,18 @@ def get_posts_json():
         "created_at" : post.created_at,
         "updated_at" : post.updated_at
     } for post in posts])
+
+# ユーザーの一覧を取得するためのapi
+@api.route('/get_users', methods=['GET'])
+def get_users_json():
+    users = User.query.all()
+    return jsonify([{
+        "user_id" : user.user_id,
+        "user_name" : user.user_name,
+        "password" : "*" * len(user.password),
+        "favorite" : user.favorite,
+        "created_at" : user.created_at
+    } for user in users])
 
 # createのapi
 @api.route('/create', methods=['POST'])
@@ -45,4 +57,25 @@ def update_post(post, request):
 @api.route('/delete', methods=['DELETE'])
 def delete_post(post, request):
     db.session.delete(post)
+    db.session.commit()
+
+def check_favorite(post_id, user_id):
+    stmt = (
+        select(Favorite)
+        .where(Favorite.post_id==post_id)
+        .where(Favorite.user_id==user_id)
+    )
+    if db.session.scalar(stmt) is None:
+        return False
+    else:
+        return True
+
+def add_favorite(post_id, user_id):
+    favorite = Favorite(post_id=post_id, user_id=user_id)
+    db.session.add(favorite)
+    db.session.commit()
+
+def delete_favorite(post_id, user_id):
+    favorite = Favorite(post_id=post_id, user_id=user_id)
+    db.session.delete(favorite)
     db.session.commit()

@@ -32,3 +32,8 @@ class User(UserMixin, db.Model):
     # Flask-Loginでは"id"を定義しないといけないが、"user_id"としてしまったのでget_id()をオーバーライドしている
     def get_id(self):
         return str(self.user_id)
+
+class Favorite(db.Model):
+    __tablename__ = 'favorite'
+    post_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, primary_key=True)
