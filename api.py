@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify
 from datetime import datetime
 import pytz
-from models import db, Post, User
+from models import db, Post, User, Favorite
+from sqlalchemy import select
 
 api = Blueprint('api', __name__)
 
@@ -17,7 +18,7 @@ def get_posts_json():
         "post_id" : post.post_id,
         "title" : post.title,
         "body" : post.body,
-        "url" : post.url,
+        "user_id" : post.user_id,
         "created_at" : post.created_at,
         "updated_at" : post.updated_at
     } for post in posts])
@@ -30,17 +31,16 @@ def get_users_json():
         "user_id" : user.user_id,
         "user_name" : user.user_name,
         "password" : "*" * len(user.password),
-        "favorite" : user.favorite,
         "created_at" : user.created_at
     } for user in users])
 
 # createのapi
 @api.route('/create', methods=['POST'])
-def create_post(request):
+def create_post(request, user_id):
     title = request.form.get('title')
     body = request.form.get('body')
-    url = request.form.get('url')
-    post = Post(title=title, body=body, url=url)
+    user_id = user_id
+    post = Post(title=title, body=body, user_id=user_id)
     db.session.add(post)
     db.session.commit()
 
@@ -49,7 +49,7 @@ def create_post(request):
 def update_post(post, request):
     post.title = request.form.get('title')
     post.body = request.form.get('body')
-    post.url = request.form.get('url')
+    post.user_id = request.form.get('user_id')
     post.updated_at = datetime.now(pytz.timezone('Asia/Tokyo'))
     db.session.commit()
 
@@ -59,23 +59,21 @@ def delete_post(post, request):
     db.session.delete(post)
     db.session.commit()
 
+# お気に入り機能
 def check_favorite(post_id, user_id):
     stmt = (
         select(Favorite)
         .where(Favorite.post_id==post_id)
         .where(Favorite.user_id==user_id)
     )
-    if db.session.scalar(stmt) is None:
-        return False
-    else:
-        return True
+    favorite = db.session.scalar(stmt)
+    # 検索結果を返却
+    return favorite
 
-def add_favorite(post_id, user_id):
-    favorite = Favorite(post_id=post_id, user_id=user_id)
+def add_favorite(favorite):
     db.session.add(favorite)
     db.session.commit()
 
-def delete_favorite(post_id, user_id):
-    favorite = Favorite(post_id=post_id, user_id=user_id)
+def delete_favorite(favorite):
     db.session.delete(favorite)
     db.session.commit()

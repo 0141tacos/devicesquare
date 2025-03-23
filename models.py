@@ -13,14 +13,13 @@ class Post(db.Model):
     # 画像のカラムを作りたい
     # いったん保留（画像の保管方法をDBにするか外部ストレージにするか決められないため）
     # image = db.Column(db.blob)
-    url = db.Column(db.String(500))
+    # 投稿を作成したユーザーのID
+    # 編集・削除ボタンを表示するときの場合分けに利用
+    user_id = db.Column(db.Integer)
     created_at = db.Column(db.DateTime, nullable=False,
                 default=datetime.now(pytz.timezone('Asia/Tokyo')))
     updated_at = db.Column(db.DateTime, nullable=False,
                 default=datetime.now(pytz.timezone('Asia/Tokyo')))
-    # 論理削除フラグ
-    # 20250227時点ではCRUDの勉強のため利用しないこととする
-    delete_flag = db.Column(db.Boolean, nullable=False, default=0)
 
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
@@ -35,5 +34,6 @@ class User(UserMixin, db.Model):
 
 class Favorite(db.Model):
     __tablename__ = 'favorite'
-    post_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, primary_key=True)
+    favorite_id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.post_id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))

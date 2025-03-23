@@ -5,11 +5,16 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{{ post.title }}</h1>
+    <h1>投稿詳細</h1>
     <article>
+        <h2>{{ post.title }}</h2>
         <p>{{ post.body }}</p>
-        <p>URL：{{ post.url }}</p>
         <p>作成日時：{{ post.created_at }}</p>
         <p>更新日時：{{ post.updated_at }}</p>
+        {% if check_favorite %}
+            <p>お気に入り：<a href="/{{post.post_id}}/favorite">★</a></p>
+        {% else %}
+            <p>お気に入り：<a href="/{{post.post_id}}/favorite">☆</a></p>
+        {% endif %}
     </article>
 {% endblock %}

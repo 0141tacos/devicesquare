@@ -1,16 +1,17 @@
-from flask import Flask
+from flask import Flask, url_for
 from flask import render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required
+from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
+from api import create_post, update_post, delete_post, check_favorite, add_favorite, delete_favorite
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///devicesquare.db'
 app.config['SECRET_KEY'] = os.urandom(24)
 
 # dbをmodels.pyに外だししたためインポート
-from models import db, Post, User
+from models import db, Post, User, Favorite
 db.init_app(app)
 
 login_manager = LoginManager()
@@ -67,29 +68,28 @@ def logout():
 
 # 初期画面表示のためのルーティング
 @app.route('/', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def homepage():
     posts = Post.query.all()
     return render_template('homepage.html', posts=posts)
 
 # 投稿作成画面表示のためのルーティング
 @app.route('/create', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def create():
     if request.method == 'POST':
-        from api import create_post
-        create_post(request)
+        create_post(request, current_user.user_id)
+        print(f'createメソッド　ユーザーID：{current_user.user_id}')
         return redirect('/')
     else:
         return render_template('create.html')
 
 # 投稿更新画面表示のためのルーティング
 @app.route('/<int:post_id>/update', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def update(post_id):
     post = Post.query.get(post_id)
     if request.method == 'POST':
-        from api import update_post
         update_post(post, request)
         return redirect('/')
     elif request.method == 'GET':
@@ -97,13 +97,12 @@ def update(post_id):
 
 # 投稿を削除するためのルーティング
 @app.route('/<int:post_id>/delete', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def delete(post_id):
     post = Post.query.get(post_id)
     if request.method == 'POST':
         # 20250227時点ではCRUDの勉強のため論理削除フラグ（delete_flag）は利用しないこととする
         # post.delete_flag = 1
-        from api import delete_post
         delete_post(post, request)
         return redirect('/')
     elif request.method == 'GET':
@@ -111,20 +110,24 @@ def delete(post_id):
 
 # 投稿の詳細画面を表示するためのルーティング
 @app.route('/<int:post_id>/detail/<string:title>', methods=['GET'])
-@login_required
+# @login_required
 def post_detail(post_id, title):
     post = Post.query.get(post_id)
-    return render_template('post_detail.html', post=post)
+    return render_template('post_detail.html', post=post, check_favorite=check_favorite(post_id, current_user.user_id))
 
 # 投稿に対してお気に入り機能を使うためのルーティング
-@app.route('/<int:post_id>/<int:user_id>/favorite')
-@login_required
-def favorite(post_id, user_id):
-    from api import check_favorite, add_favorite, delete_favorite
-    if check_favorite(post_id, user_id):
-        add_favorite(post_id, user_id)
-        return redirect(url_for('post_detail'))
+@app.route('/<int:post_id>/favorite', methods=['GET'])
+# @login_required
+def favorite(post_id):
+    favorite = check_favorite(post_id, current_user.user_id)
+    # 検索結果がある（favoriteテーブルに登録されている）場合は削除、ない（テーブル未登録）の場合は追加
+    if favorite:
+        delete_favorite(favorite)
+        post = Post.query.get(post_id)
+        return redirect(url_for('post_detail', post_id=post_id, title=post.title))
     else:
-        delete_favorite(post_id, user_id)
-        return redirect(url_for('post_detail'))
+        favorite = Favorite(post_id=post_id, user_id=current_user.user_id)
+        add_favorite(favorite)
+        post = Post.query.get(post_id)
+        return redirect(url_for('post_detail', post_id=post_id, title=post.title))
 
