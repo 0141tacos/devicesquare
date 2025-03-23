@@ -70,8 +70,7 @@ def check_favorite(post_id, user_id):
     # 検索結果を返却
     return favorite
 
-def add_favorite(post_id, user_id):
-    favorite = Favorite(post_id=post_id, user_id=user_id)
+def add_favorite(favorite):
     db.session.add(favorite)
     db.session.commit()
 

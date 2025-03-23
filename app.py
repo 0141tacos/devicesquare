@@ -126,7 +126,8 @@ def favorite(post_id):
         post = Post.query.get(post_id)
         return redirect(url_for('post_detail', post_id=post_id, title=post.title))
     else:
-        add_favorite(post_id, current_user.user_id)
+        favorite = Favorite(post_id=post_id, user_id=current_user.user_id)
+        add_favorite(favorite)
         post = Post.query.get(post_id)
         return redirect(url_for('post_detail', post_id=post_id, title=post.title))
 
