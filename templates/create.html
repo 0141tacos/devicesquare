@@ -4,15 +4,13 @@
 {% endblock %}
 {% block content %}
     <h1>新規投稿</h1>
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         <label for="title">タイトル</label>
         <input type="text" name="title">
         <label for="body">内容</label>
         <input type="text" name="body">
-        <!--
-        <label for="image">写真</label>
-        <input type="image" name="image">
-        -->
+        <label for="file">写真</label>
+        <input type="file" name="file">
         <input type="submit" value="投稿">
     </form>
 {% endblock %}

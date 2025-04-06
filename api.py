@@ -3,6 +3,9 @@ from datetime import datetime
 import pytz
 from models import db, Post, User, Favorite
 from sqlalchemy import select
+import os
+from werkzeug.utils import secure_filename
+from personalinfo import UPLOAD_FOLDER
 
 api = Blueprint('api', __name__)
 
@@ -34,13 +37,41 @@ def get_users_json():
         "created_at" : user.created_at
     } for user in users])
 
+# 画像登録のための関数
+# 画像登録ができるファイルの拡張子を指定する
+ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
+
+# 投稿しようとしている画像ファイルの拡張子が指定のものかどうか確認する関数
+def allowed_file(filename):
+    if '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS:
+        return True
+    else:
+        print(f'allowed_file(): 許可されていない拡張子のファイルです')
+        return False
+
+# ファイルをアップロードするための関数
+def upload_file(request):
+    file = request.files['file']
+    if file is None:
+        return None
+    elif file.filename == '':
+        return None
+    elif file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(filepath)
+        return filepath
+    else:
+        return None
+
 # createのapi
 @api.route('/create', methods=['POST'])
 def create_post(request, user_id):
     title = request.form.get('title')
     body = request.form.get('body')
+    image = upload_file(request)
     user_id = user_id
-    post = Post(title=title, body=body, user_id=user_id)
+    post = Post(title=title, body=body, image=image, user_id=user_id)
     db.session.add(post)
     db.session.commit()
 

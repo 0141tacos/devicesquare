@@ -10,9 +10,7 @@ class Post(db.Model):
     post_id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(50), nullable=False)
     body = db.Column(db.String(400))
-    # 画像のカラムを作りたい
-    # いったん保留（画像の保管方法をDBにするか外部ストレージにするか決められないため）
-    # image = db.Column(db.blob)
+    image = db.Column(db.String(400))
     # 投稿を作成したユーザーのID
     # 編集・削除ボタンを表示するときの場合分けに利用
     user_id = db.Column(db.Integer)
