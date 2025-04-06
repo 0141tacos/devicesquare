@@ -45,31 +45,25 @@ ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 def allowed_file(filename):
     print(f'allowed_file: {filename}')
     if '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS:
-        return filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+        return True
     else:
         print(f'allowed_file: 許可されていないファイル拡張子です')
-        return None
+        return False
 
 # ファイルをアップロードするための関数
 def upload_file(request):
-    print('upload_fileの呼び出し成功')
     file = request.files['file']
     print(file)
     if file is None:
-        print('fileはありません1')
         return None
     elif file.filename == '':
-        print('fileはありません2')
         return None
     elif file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        print(f'filename: {filename}')
         filepath = os.path.join(UPLOAD_FOLDER, filename)
-        print(f'filepath: {filepath}')
         file.save(filepath)
         return filepath
     else:
-        print('fileはありません3')
         return None
 
 # createのapi
