@@ -43,17 +43,15 @@ ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 
 # 投稿しようとしている画像ファイルの拡張子が指定のものかどうか確認する関数
 def allowed_file(filename):
-    print(f'allowed_file: {filename}')
     if '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS:
         return True
     else:
-        print(f'allowed_file: 許可されていないファイル拡張子です')
+        print(f'allowed_file(): 許可されていない拡張子のファイルです')
         return False
 
 # ファイルをアップロードするための関数
 def upload_file(request):
     file = request.files['file']
-    print(file)
     if file is None:
         return None
     elif file.filename == '':
