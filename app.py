@@ -11,7 +11,7 @@ from personalinfo import UPLOAD_FOLDER, SECRET_KEY
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///devicesquare.db'
 app.config['SECRET_KEY'] = SECRET_KEY
-app.config['UPLOARD_FOLDER'] =UPLOARD_FOLDER
+app.config['UPLOAD_FOLDER'] =UPLOAD_FOLDER
 
 # dbをmodels.pyに外だししたためインポート
 from models import db, Post, User, Favorite
