@@ -5,7 +5,7 @@ from models import db, Post, User, Favorite
 from sqlalchemy import select
 import os
 from werkzeug.utils import secure_filename
-from personalinfo import UPLOARD_FOLDER
+from personalinfo import UPLOAD_FOLDER
 
 api = Blueprint('api', __name__)
 
@@ -64,7 +64,7 @@ def upload_file(request):
     elif file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         print(f'filename: {filename}')
-        filepath = os.path.join(UPLOARD_FOLDER, filename)
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
         print(f'filepath: {filepath}')
         file.save(filepath)
         return filepath

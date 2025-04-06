@@ -6,12 +6,12 @@ from flask_login import UserMixin, LoginManager, login_user, logout_user, login_
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from api import create_post, update_post, delete_post, check_favorite, add_favorite, delete_favorite
-from personalinfo import UPLOARD_FOLDER, SECRET_KEY
+from personalinfo import UPLOAD_FOLDER, SECRET_KEY
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///devicesquare.db'
 app.config['SECRET_KEY'] = SECRET_KEY
-app.config['UPLOARD_FOLDER'] = UPLOARD_FOLDER
+app.config['UPLOARD_FOLDER'] =UPLOARD_FOLDER
 
 # dbをmodels.pyに外だししたためインポート
 from models import db, Post, User, Favorite
