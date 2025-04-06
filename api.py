@@ -3,6 +3,9 @@ from datetime import datetime
 import pytz
 from models import db, Post, User, Favorite
 from sqlalchemy import select
+import os
+from werkzeug.utils import secure_filename
+from personalinfo import UPLOARD_FOLDER
 
 api = Blueprint('api', __name__)
 
@@ -34,13 +37,49 @@ def get_users_json():
         "created_at" : user.created_at
     } for user in users])
 
+# 画像登録のための関数
+# 画像登録ができるファイルの拡張子を指定する
+ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
+
+# 投稿しようとしている画像ファイルの拡張子が指定のものかどうか確認する関数
+def allowed_file(filename):
+    print(f'allowed_file: {filename}')
+    if '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS:
+        return filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    else:
+        print(f'allowed_file: 許可されていないファイル拡張子です')
+        return None
+
+# ファイルをアップロードするための関数
+def upload_file(request):
+    print('upload_fileの呼び出し成功')
+    file = request.files['file']
+    print(file)
+    if file is None:
+        print('fileはありません1')
+        return None
+    elif file.filename == '':
+        print('fileはありません2')
+        return None
+    elif file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        print(f'filename: {filename}')
+        filepath = os.path.join(UPLOARD_FOLDER, filename)
+        print(f'filepath: {filepath}')
+        file.save(filepath)
+        return filepath
+    else:
+        print('fileはありません3')
+        return None
+
 # createのapi
 @api.route('/create', methods=['POST'])
 def create_post(request, user_id):
     title = request.form.get('title')
     body = request.form.get('body')
+    image = upload_file(request)
     user_id = user_id
-    post = Post(title=title, body=body, user_id=user_id)
+    post = Post(title=title, body=body, image=image, user_id=user_id)
     db.session.add(post)
     db.session.commit()
 

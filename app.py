@@ -1,18 +1,23 @@
 from flask import Flask, url_for
 from flask import render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from api import create_post, update_post, delete_post, check_favorite, add_favorite, delete_favorite
+from personalinfo import UPLOARD_FOLDER, SECRET_KEY
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///devicesquare.db'
-app.config['SECRET_KEY'] = os.urandom(24)
+app.config['SECRET_KEY'] = SECRET_KEY
+app.config['UPLOARD_FOLDER'] = UPLOARD_FOLDER
 
 # dbをmodels.pyに外だししたためインポート
 from models import db, Post, User, Favorite
 db.init_app(app)
+
+migrate = Migrate(app, db)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -79,7 +84,6 @@ def homepage():
 def create():
     if request.method == 'POST':
         create_post(request, current_user.user_id)
-        print(f'createメソッド　ユーザーID：{current_user.user_id}')
         return redirect('/')
     else:
         return render_template('create.html')
@@ -101,8 +105,6 @@ def update(post_id):
 def delete(post_id):
     post = Post.query.get(post_id)
     if request.method == 'POST':
-        # 20250227時点ではCRUDの勉強のため論理削除フラグ（delete_flag）は利用しないこととする
-        # post.delete_flag = 1
         delete_post(post, request)
         return redirect('/')
     elif request.method == 'GET':
@@ -130,4 +132,3 @@ def favorite(post_id):
         add_favorite(favorite)
         post = Post.query.get(post_id)
         return redirect(url_for('post_detail', post_id=post_id, title=post.title))
-
