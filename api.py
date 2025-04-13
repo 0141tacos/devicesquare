@@ -5,7 +5,7 @@ from models import db, Post, User, Favorite
 from sqlalchemy import select
 import os
 from werkzeug.utils import secure_filename
-from personalinfo import UPLOAD_FOLDER
+from config import UPLOAD_FOLDER
 
 api = Blueprint('api', __name__)
 
@@ -46,7 +46,7 @@ def allowed_file(filename):
     if '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS:
         return True
     else:
-        print(f'allowed_file(): 許可されていない拡張子のファイルです')
+        print('allowed_file(): 許可されていない拡張子のファイルです')
         return False
 
 # ファイルをアップロードするための関数
@@ -54,15 +54,14 @@ def upload_file(request):
     file = request.files['file']
     if file is None:
         return None
-    elif file.filename == '':
+    if file.filename == '':
         return None
-    elif file and allowed_file(file.filename):
+    if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         filepath = os.path.join(UPLOAD_FOLDER, filename)
         file.save(filepath)
         return filepath
-    else:
-        return None
+    return None
 
 # createのapi
 @api.route('/create', methods=['POST'])
