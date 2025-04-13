@@ -10,6 +10,7 @@ class Post(db.Model):
     post_id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(50), nullable=False)
     body = db.Column(db.String(400))
+    # imageには保存している画像ファイルのパスを格納する
     image = db.Column(db.String(400))
     # 投稿を作成したユーザーのID
     # 編集・削除ボタンを表示するときの場合分けに利用

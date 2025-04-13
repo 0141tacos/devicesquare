@@ -1,4 +1,4 @@
-from flask import Flask, url_for
+from flask import Flask, url_for, send_from_directory
 from flask import render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -6,11 +6,11 @@ from flask_login import UserMixin, LoginManager, login_user, logout_user, login_
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from api import create_post, update_post, delete_post, check_favorite, add_favorite, delete_favorite
-from personalinfo import UPLOAD_FOLDER, SECRET_KEY
+from config import UPLOAD_FOLDER
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///devicesquare.db'
-app.config['SECRET_KEY'] = SECRET_KEY
+app.config['SECRET_KEY'] = os.urandom(24)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # dbをmodels.pyに外だししたためインポート
@@ -132,3 +132,8 @@ def favorite(post_id):
         add_favorite(favorite)
         post = Post.query.get(post_id)
         return redirect(url_for('post_detail', post_id=post_id, title=post.title))
+
+# アップロードされている画像を表示するためのルーティング
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
