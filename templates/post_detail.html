@@ -9,7 +9,10 @@
     <article>
         <h2>{{ post.title }}</h2>
         <p>{{ post.body }}</p>
-        <img src="{{ url_for('uploaded_file', filename=post.image.rsplit('\\', 1)[1]) }}">
+        {% if post.image is not none %}
+            <!-- imageには画像ファイルのフルパスを格納しているため、ファイル名のみを渡している -->
+            <img src="{{ url_for('uploaded_file', filename=post.image.rsplit('\\', 1)[1])}}">
+        {% endif %}
         <p>作成日時：{{ post.created_at }}</p>
         <p>更新日時：{{ post.updated_at }}</p>
         {% if check_favorite %}

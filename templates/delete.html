@@ -8,6 +8,10 @@
         <p>{{ post.title }}</p>
         <label for="body">内容</label>
         <p>{{ post.body }}</p>
+        {% if post.image is not none %}
+            <!-- imageには画像ファイルのフルパスを格納しているため、ファイル名のみを渡している -->
+            <img src="{{ url_for('uploaded_file', filename=post.image.rsplit('\\', 1)[1])}}">
+        {% endif %}
         <label for="created_at">作成日時</label>
         <p>{{ post.created_at }}</p>
         <label for="updated_at">更新日時</label>
