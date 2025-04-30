@@ -36,3 +36,15 @@ class Favorite(db.Model):
     favorite_id = db.Column(db.Integer, primary_key=True)
     post_id = db.Column(db.Integer, db.ForeignKey('post.post_id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))
+
+class Follow(db.Model):
+    __tablename__ = 'follow'
+    # フォローする側
+    follower_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), primary_key=True, nullable=False)
+    # フォローされる側
+    followed_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), primary_key=True, nullable=False)
+    # フォローした日
+    created_at = db.Column(db.DateTime, nullable=False,
+                default=datetime.now(pytz.timezone('Asia/Tokyo')))
+    # フォローが重複しないためのユニーク制約
+    __table_args__ = (db.UniqueConstraint('follower_id', 'followed_id', name='_follower_followed_uc'),)
