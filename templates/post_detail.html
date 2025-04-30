@@ -8,10 +8,19 @@
     <h1>投稿詳細</h1>
     <article>
         <h2>{{ post.title }}</h2>
+        <!-- 投稿を作成したユーザーの情報を出力 -->
+        <p>ユーザーID：{{ user.user_id }}</p>
+        <p>ユーザー名：{{ user.user_name }}</p>
+        {% if check_follow %}
+            <p>お気に入り：<a href="{{url_for('follow', user_id=user.user_id, post_id=post.post_id, title=post.title)}}">フォロー中</a></p>
+        {% else %}
+            <p>お気に入り：<a href="{{url_for('follow', user_id=user.user_id, post_id=post.post_id, title=post.title)}}">フォローする</a></p>
+        {% endif %}
+        <p>内容</p>
         <p>{{ post.body }}</p>
         {% if post.image is not none %}
             <!-- imageには画像ファイルのフルパスを格納しているため、ファイル名のみを渡している -->
-            <img src="{{ url_for('uploaded_file', filename=post.image.rsplit('\\', 1)[1])}}">
+            <img src="{{url_for('uploaded_file', filename=post.image.rsplit('\\', 1)[1])}}">
         {% endif %}
         <p>作成日時：{{ post.created_at }}</p>
         <p>更新日時：{{ post.updated_at }}</p>

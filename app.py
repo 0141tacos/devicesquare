@@ -1,20 +1,24 @@
 from flask import Flask, url_for, send_from_directory
 from flask import render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import select
 from flask_migrate import Migrate
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
-from api import create_post, update_post, delete_post, check_favorite, add_favorite, delete_favorite
+from api import create_post, update_post, delete_post, check_favorite, add_favorite, delete_favorite, check_follow, add_follow, delete_follow
 from config import UPLOAD_FOLDER
+# dbをmodels.pyに外だししたためインポート
+from models import db, Post, User, Favorite, Follow
+# apiを利用できるようにするためのインポート
+from api import init_api
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///devicesquare.db'
 app.config['SECRET_KEY'] = os.urandom(24)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# dbをmodels.pyに外だししたためインポート
-from models import db, Post, User, Favorite
+# dbをアプリに登録
 db.init_app(app)
 
 migrate = Migrate(app, db)
@@ -22,8 +26,7 @@ migrate = Migrate(app, db)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-# apiを利用できるようにするためのインポート
-from api import init_api
+# apiを初期化
 init_api(app)
 
 # ログイン状態を管理するための関数
@@ -115,7 +118,9 @@ def delete(post_id):
 # @login_required
 def post_detail(post_id, title):
     post = Post.query.get(post_id)
-    return render_template('post_detail.html', post=post, check_favorite=check_favorite(post_id, current_user.user_id))
+    # 投稿を作成したユーザーの情報を取得
+    user = db.session.execute(select(User).filter_by(user_id=post.user_id)).scalar_one()
+    return render_template('post_detail.html', post=post, user=user, check_favorite=check_favorite(post_id, current_user.user_id), check_follow=check_follow(post.user_id, current_user.user_id))
 
 # 投稿に対してお気に入り機能を使うためのルーティング
 @app.route('/<int:post_id>/favorite', methods=['GET'])
@@ -137,3 +142,19 @@ def favorite(post_id):
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+# フォロー機能のためのルーティング
+@app.route('/<int:user_id>/follow', methods=['GET'])
+# @login_required
+def follow(user_id):
+    follow = check_follow(current_user.user_id, user_id)
+    post_id = request.args.get('post_id')
+    title = request.args.get('title')
+    # 検索結果がある（followテーブルに登録されている）場合は削除、ない（テーブル未登録）の場合は追加
+    if follow:
+        delete_follow(follow)
+        return redirect(url_for('post_detail', post_id=post_id, title=title))
+    else:
+        follow = Follow(follower_id=current_user.user_id, followed_id=user_id)
+        add_follow(follow)
+        return redirect(url_for('post_detail', post_id=post_id, title=title))

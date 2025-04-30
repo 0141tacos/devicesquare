@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify
 from datetime import datetime
 import pytz
-from models import db, Post, User, Favorite
+from models import db, Post, User, Favorite, Follow
 from sqlalchemy import select
 import os
 from werkzeug.utils import secure_filename
@@ -106,4 +106,23 @@ def add_favorite(favorite):
 
 def delete_favorite(favorite):
     db.session.delete(favorite)
+    db.session.commit()
+
+# フォロー機能
+def check_follow(follower_id, followed_id):
+    stmt = (
+        select(Follow)
+        .where(Follow.follower_id==follower_id)
+        .where(Follow.followed_id==followed_id)
+    )
+    follow = db.session.execute(stmt).scalar_one_or_none()
+    # 検索結果を返却
+    return follow
+
+def add_follow(follow):
+    db.session.add(follow)
+    db.session.commit()
+
+def delete_follow(follow):
+    db.session.delete(follow)
     db.session.commit()
