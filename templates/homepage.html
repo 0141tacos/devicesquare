@@ -1,26 +1,32 @@
 {% extends "base.html" %}
 
 {% block title %}
-    <title>DeviceSquare</title>
+<title>DeviceSquare</title>
 {% endblock %}
 
 {% block content %}
-    <h1>投稿一覧</h1>
-    <a href="/create" role="button">新規投稿</a>
+<h1>投稿一覧</h1>
+<a href="/create" role="button">新規投稿</a>
+<div class="row row-cols-1 row-cols-md-3">
     {% for post in posts %}
-         <a href="/{{post.post_id}}/detail/{{post.title}}">
-            <article>
-                <h2>{{ post.title }}</h2>
+    <div class="col">
+        <div class="card">
+            {% if post.image is not none %}
+            <!-- imageには画像ファイルのフルパスを格納しているため、ファイル名のみを渡している -->
+            <img src="{{ url_for('uploaded_file', filename=post.image.rsplit('\\', 1)[1])}}" class="card-img-top">
+            {% endif %}
+            <div class="card-body">
+                <a href="/{{post.post_id}}/detail/{{post.title}}">
+                    <h2>{{ post.title }}</h2>
+                </a>
                 <a href="/{{post.post_id}}/update" role="button">編集</a>
                 <a href="/{{post.post_id}}/delete" role="button">削除</a>
                 <p>{{ post.body }}</p>
-                {% if post.image is not none %}
-                    <!-- imageには画像ファイルのフルパスを格納しているため、ファイル名のみを渡している -->
-                    <img src="{{ url_for('uploaded_file', filename=post.image.rsplit('\\', 1)[1])}}">
-                {% endif %}
                 <p class="time">作成日時：{{ post.created_at }}</p>
                 <p class="time">更新日時：{{ post.updated_at }}</p>
-            </article>
-        </a>
+            </div>
+        </div>
+    </div>
     {% endfor %}
+</div>
 {% endblock %}
