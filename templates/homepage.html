@@ -19,8 +19,10 @@
                 <a href="/{{post.post_id}}/detail/{{post.title}}">
                     <h2>{{ post.title }}</h2>
                 </a>
+                {% if current_user.user_id == post.user_id %}
                 <a href="/{{post.post_id}}/update" role="button">編集</a>
                 <a href="/{{post.post_id}}/delete" role="button">削除</a>
+                {% endif %}
                 <p>{{ post.body }}</p>
                 <p class="time">作成日時：{{ post.created_at }}</p>
                 <p class="time">更新日時：{{ post.updated_at }}</p>
