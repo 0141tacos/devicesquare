@@ -5,15 +5,19 @@
 {% endblock %}
 
 {% block content %}
-<h1>投稿一覧</h1>
-<a href="/create" role="button">新規投稿</a>
+<h1>記事一覧</h1>
+<a href="/create" role="button">新規作成</a>
 <div class="row row-cols-1 row-cols-md-3">
     {% for post in posts %}
     <div class="col">
         <div class="card">
             {% if post.image is not none %}
             <!-- imageには画像ファイルのフルパスを格納しているため、ファイル名のみを渡している -->
+            <!-- ※windowsの場合※ 画像のURLを取得するために、rsplitメソッドを使用してファイル名を取得
             <img src="{{ url_for('uploaded_file', filename=post.image.rsplit('\\', 1)[1])}}" class="card-img-top">
+            -->
+            <!-- ※macの場合※ 画像のURLを取得するために、rsplitメソッドを使用してファイル名を取得 -->
+            <img src="{{ url_for('uploaded_file', filename=post.image.rsplit('/', 1)[1])}}" class="card-img-top">
             {% endif %}
             <div class="card-body">
                 <a href="/{{post.post_id}}/detail/{{post.title}}">

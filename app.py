@@ -44,12 +44,12 @@ def signup():
                     password=generate_password_hash(password, method='pbkdf2:sha256'))
         db.session.add(user)
         db.session.commit()
-        return redirect('/login')
+        return redirect('/')
     else:
-        return render_template('/signup.html')
+        return render_template('signup.html')
 
 # ログイン画面を表示するためのルーティング
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def login():
     text = None
     if request.method == 'POST':
@@ -58,64 +58,63 @@ def login():
         user = User.query.filter_by(user_name=user_name).first()
         if user is None:
             text = 'ユーザーが登録されていません'
-            return render_template('/login.html', text=text)
+            return render_template('login.html', text=text)
         else:
             if check_password_hash(user.password, password):
                 login_user(user)
-                return redirect('/')
+                return redirect('/homepage')
             elif check_password_hash(user.password, password) is False:
                 text = 'パスワードが違います'
-                return render_template('/login.html', text=text)
-    else:
-        return render_template('/login.html', text=text)
+                return render_template('login.html', text=text)
+    return render_template('login.html', text=text)
 
 @app.route('/logout')
 def logout():
     logout_user()
-    return redirect('/login')
+    return redirect('/')
 
 # 初期画面表示のためのルーティング
-@app.route('/', methods=['GET', 'POST'])
-# @login_required
+@app.route('/homepage', methods=['GET', 'POST'])
+@login_required
 def homepage():
     posts = Post.query.all()
     return render_template('homepage.html', posts=posts)
 
 # 投稿作成画面表示のためのルーティング
 @app.route('/create', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def create():
     if request.method == 'POST':
         create_post(request, current_user.user_id)
-        return redirect('/')
+        return redirect('/homepage')
     else:
         return render_template('create.html')
 
 # 投稿更新画面表示のためのルーティング
 @app.route('/<int:post_id>/update', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def update(post_id):
     post = Post.query.get(post_id)
     if request.method == 'POST':
         update_post(post, request)
-        return redirect('/')
+        return redirect('/homepage')
     elif request.method == 'GET':
         return render_template('update.html', post=post)
 
 # 投稿を削除するためのルーティング
 @app.route('/<int:post_id>/delete', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def delete(post_id):
     post = Post.query.get(post_id)
     if request.method == 'POST':
         delete_post(post, request)
-        return redirect('/')
+        return redirect('/homepage')
     elif request.method == 'GET':
         return render_template('delete.html', post=post)
 
 # 投稿の詳細画面を表示するためのルーティング
 @app.route('/<int:post_id>/detail/<string:title>', methods=['GET'])
-# @login_required
+@login_required
 def post_detail(post_id, title):
     post = Post.query.get(post_id)
     # 投稿を作成したユーザーの情報を取得
@@ -124,7 +123,7 @@ def post_detail(post_id, title):
 
 # 投稿に対してお気に入り機能を使うためのルーティング
 @app.route('/<int:post_id>/favorite', methods=['GET'])
-# @login_required
+@login_required
 def favorite(post_id):
     favorite = check_favorite(post_id, current_user.user_id)
     # 検索結果がある（favoriteテーブルに登録されている）場合は削除、ない（テーブル未登録）の場合は追加

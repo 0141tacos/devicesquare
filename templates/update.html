@@ -1,19 +1,22 @@
 {% extends "base.html" %}
 {% block title %}
-    <title>{{ post.title }}の編集</title>
+<title>{{ post.title }}の編集</title>
 {% endblock %}
 {% block content %}
-    <h1>新規投稿</h1>
-    <form method="POST">
-        <label for="title">タイトル</label>
-        <input type="text" name="title" value="{{post.title}}">
-        <label for="body">内容</label>
-        <input type="text" name="body" value="{{post.body}}">
-        {% if post.image is not none %}
-            <label for="image">画像</label>
-            <!-- imageには画像ファイルのフルパスを格納しているため、ファイル名のみを渡している -->
-            <img src="{{ url_for('uploaded_file', filename=post.image.rsplit('\\', 1)[1])}}">
-        {% endif %}
-        <input type="submit" value="更新">
-    </form>
+<form method="POST">
+    <label for="title">タイトル</label>
+    <input type="text" name="title" value="{{post.title}}">
+    <label for="body">内容</label>
+    <input type="text" name="body" value="{{post.body}}">
+    {% if post.image is not none %}
+    <label for="image">画像</label>
+    <!-- ※windowsの場合※ 画像のURLを取得するために、rsplitメソッドを使用してファイル名を取得
+            <img src="{{ url_for('uploaded_file', filename=post.image.rsplit('\\', 1)[1])}}" class="card-img-top">
+            -->
+    <!-- ※macの場合※ 画像のURLを取得するために、rsplitメソッドを使用してファイル名を取得 -->
+    <img src="{{ url_for('uploaded_file', filename=post.image.rsplit('/', 1)[1])}}" class="card-img-top">
+    {% endif %}
+    <input type="submit" value="更新">
+    <a href="/homepage" role="button">戻る</a>
+</form>
 {% endblock %}
