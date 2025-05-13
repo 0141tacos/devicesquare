@@ -13,5 +13,6 @@
         {% if text != None %}
         <p>{{ text }}</p>
         {% endif %}
+        <h6>ユーザー登録がまだの方は<a href="{{url_for('signup')}}">こちら</a></h6>
     </form>
 {% endblock %}

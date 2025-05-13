@@ -19,8 +19,11 @@
         <p>内容</p>
         <p>{{ post.body }}</p>
         {% if post.image is not none %}
-            <!-- imageには画像ファイルのフルパスを格納しているため、ファイル名のみを渡している -->
-            <img src="{{url_for('uploaded_file', filename=post.image.rsplit('\\', 1)[1])}}">
+            <!-- ※windowsの場合※ 画像のURLを取得するために、rsplitメソッドを使用してファイル名を取得
+            <img src="{{ url_for('uploaded_file', filename=post.image.rsplit('\\', 1)[1])}}" class="card-img-top">
+            -->
+            <!-- ※macの場合※ 画像のURLを取得するために、rsplitメソッドを使用してファイル名を取得 -->
+            <img src="{{ url_for('uploaded_file', filename=post.image.rsplit('/', 1)[1])}}" class="card-img-top">
         {% endif %}
         <p>作成日時：{{ post.created_at }}</p>
         <p>更新日時：{{ post.updated_at }}</p>

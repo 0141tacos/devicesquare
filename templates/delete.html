@@ -9,8 +9,11 @@
         <label for="body">内容</label>
         <p>{{ post.body }}</p>
         {% if post.image is not none %}
-            <!-- imageには画像ファイルのフルパスを格納しているため、ファイル名のみを渡している -->
-            <img src="{{ url_for('uploaded_file', filename=post.image.rsplit('\\', 1)[1])}}">
+            <!-- ※windowsの場合※ 画像のURLを取得するために、rsplitメソッドを使用してファイル名を取得
+            <img src="{{ url_for('uploaded_file', filename=post.image.rsplit('\\', 1)[1])}}" class="card-img-top">
+            -->
+            <!-- ※macの場合※ 画像のURLを取得するために、rsplitメソッドを使用してファイル名を取得 -->
+            <img src="{{ url_for('uploaded_file', filename=post.image.rsplit('/', 1)[1])}}" class="card-img-top">
         {% endif %}
         <label for="created_at">作成日時</label>
         <p>{{ post.created_at }}</p>
@@ -18,6 +21,6 @@
         <p>{{ post.updated_at }}</p>
         <h3>この投稿を削除しますか？</h3>
         <input type="submit" value="はい">
-        <a href="/" role="button">いいえ</a>
+        <a href="/homepage" role="button">いいえ</a>
     </form>
 {% endblock %}
