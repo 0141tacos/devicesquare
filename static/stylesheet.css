@@ -1,13 +1,20 @@
 div {
     color: #333;
     background-color: #ffff;
-    padding: 30px 30px;
 }
 
 div h1 {
     font-family: "-apple-system", "BlinkMacSystemFont", sans-serif;
     font-size: 30px;
     font-weight: bolds;
+}
+
+.login {
+	margin: 0 auto;
+}
+
+.signup{
+	margin: 0 auto;
 }
 
 h1, h2, h3 {

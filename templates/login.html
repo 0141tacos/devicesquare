@@ -1,18 +1,24 @@
 {% extends "base.html" %}
 {% block title %}
-    <title>ログイン</title>
+<title>ログイン</title>
 {% endblock %}
 {% block content %}
-    <h1>ログイン</h1>
-    <form method="POST">
-        <label for="user_name">名前</label>
-        <input type="text" name="user_name">
-        <label for="password">パスワード</label>
-        <input type="password" name="password">
-        <input type="submit" value="ログイン">
+<form method="POST" class="text-center card">
+    <div class="card-body login">
+        <h1 class="card-title">ログイン</h1>
+        <p class="card-text">
+            <input type="text" name="user_name" class="form-control" placeholder="ユーザー名" required autofocus>
+        </p>
+        <p class="card-text">
+            <input type="password" name="password" class="form-control" placeholder="パスワード" required>
+        </p>
         {% if text != None %}
-        <p>{{ text }}</p>
+        <p class="alert alert-danger">{{ text }}</p>
         {% endif %}
+        <p class="card-text">
+            <input type="submit" class="btn btn-primary" value="ログイン">
+        </p>
         <h6>ユーザー登録がまだの方は<a href="{{url_for('signup')}}">こちら</a></h6>
-    </form>
+    </div>
+</form>
 {% endblock %}
