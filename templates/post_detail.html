@@ -12,12 +12,12 @@
         <p>ユーザーID：{{ user.user_id }}</p>
         <p>ユーザー名：{{ user.user_name }}</p>
         {% if check_follow %}
-            <p>フォロー：<a href="{{url_for('follow', user_id=user.user_id, post_id=post.post_id, title=post.title)}}">フォロー中</a></p>
+            <p>フォロー：<a href="{{url_for('follow', user_id=user.user_id, post_id=post.post_id, title=post.title)}}" class="btn btn-outline-primary">フォロー中</a></p>
         {% else %}
-            <p>フォロー：<a href="{{url_for('follow', user_id=user.user_id, post_id=post.post_id, title=post.title)}}">フォローする</a></p>
+            <p>フォロー：<a href="{{url_for('follow', user_id=user.user_id, post_id=post.post_id, title=post.title)}}" class="btn btn-primary">フォローする</a></p>
         {% endif %}
-        <p>内容<p>{{ post.body }}</p></p>
-        
+        <p>内容</p>
+        <p>{{ post.body }}</p>
         {% if post.image is not none %}
             <!-- ※windowsの場合※ 画像のURLを取得するために、rsplitメソッドを使用してファイル名を取得
             <img src="{{ url_for('uploaded_file', filename=post.image.rsplit('\\', 1)[1])}}" class="card-img-top">
