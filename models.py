@@ -10,6 +10,14 @@ class Post(db.Model):
     post_id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(50), nullable=False)
     body = db.Column(db.String(400))
+    # 購入動機を格納するカラム
+    motive = db.Column(db.String(400))
+    # よかった点を格納するカラム
+    merit = db.Column(db.String(400))
+    # 微妙だった点を格納するカラム
+    demerit = db.Column(db.String(400))
+    # 評価を格納するカラム
+    rating = db.Column(db.Integer)
     # imageには保存している画像ファイルのパスを格納する
     image = db.Column(db.String(400))
     # 投稿を作成したユーザーのID
