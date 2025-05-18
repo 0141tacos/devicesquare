@@ -15,6 +15,8 @@ devicesquare/
 ├── static/         # 静的ファイル（CSS, 画像など）
 ├── templates/      # テンプレートファイル(Mako)
 ├── app.py          # メインアプリケーション
+├── api.py          # アプリケーション機能
+├── models.py       # データベース
 ├── requirements.txt
 └── README.md
 </pre>
