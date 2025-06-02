@@ -1,7 +1,7 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from datetime import datetime
 import pytz
-from models import db, Post, User, Favorite, Follow
+from models import db, Post, User, Favorite, Follow, Category
 from sqlalchemy import select
 import os
 from werkzeug.utils import secure_filename
@@ -126,3 +126,20 @@ def add_follow(follow):
 def delete_follow(follow):
     db.session.delete(follow)
     db.session.commit()
+
+# カテゴリーを追加するためのapi
+# カテゴリー追加は直接このapiを叩くことで行う
+@api.route('/set_category', methods=['POST'])
+def set_category():
+    data = request.get_json()
+    category_name = data.get('category_name')
+    # カテゴリ名が空でないか確認
+    if not category_name:
+        return jsonify({"error": "Category name is required"}), 400
+    # カテゴリが存在しない場合は新規作成
+    category = db.session.execute(select(Category).filter_by(category_name=category_name)).scalar_one_or_none()
+    if category is None:
+        category = Category(category_name=category_name)
+        db.session.add(category)
+        db.session.commit()
+        return jsonify({"message": "Category added successfully"}), 201

@@ -23,6 +23,7 @@ class Post(db.Model):
     # 投稿を作成したユーザーのID
     # 編集・削除ボタンを表示するときの場合分けに利用
     user_id = db.Column(db.Integer)
+    category_id = db.Column(db.Integer, db.ForeignKey('category.category_id', name='fk_category_id'))
     created_at = db.Column(db.DateTime, nullable=False,
                 default=datetime.now(pytz.timezone('Asia/Tokyo')))
     updated_at = db.Column(db.DateTime, nullable=False,
@@ -56,3 +57,10 @@ class Follow(db.Model):
                 default=datetime.now(pytz.timezone('Asia/Tokyo')))
     # フォローが重複しないためのユニーク制約
     __table_args__ = (db.UniqueConstraint('follower_id', 'followed_id', name='_follower_followed_uc'),)
+
+class Category(db.Model):
+    __tablename__ = 'category'
+    category_id = db.Column(db.Integer, primary_key=True)
+    category_name = db.Column(db.String(30), nullable=False, unique=True)
+    created_at = db.Column(db.DateTime, nullable=False,
+                default=datetime.now(pytz.timezone('Asia/Tokyo')))

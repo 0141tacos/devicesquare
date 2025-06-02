@@ -1,16 +1,52 @@
 {% extends "base.html" %}
 {% block title %}
-    <title>新規投稿</title>
+<title>新規投稿</title>
 {% endblock %}
 {% block content %}
-    <h1>新規作成</h1>
-    <form method="POST" enctype="multipart/form-data">
-        <label for="title">タイトル</label>
-        <input type="text" name="title">
-        <label for="body">内容</label>
-        <input type="text" name="body">
-        <label for="file">写真</label>
+<h1>新規作成</h1>
+<form method="POST" enctype="multipart/form-data" class="card-body">
+    <p>
+        <label for="title" class="card-text">商品名</label><br>
+        <input type="text" class="form-control" name="title">
+    </p>
+    <p>
+        <label for="demerit" class="card-text">カテゴリー</label><br>
+        <select name="category">
+            {% for category in categories %}
+            <option value="{{ category.category_id }}">{{ category.category_name }}</option>
+            {% endfor %}
+        </select>
+    </p>
+    <p>
+        <label for="body" class="card-text">概要</label><br>
+        <textarea class="form-control" name="body"></textarea>
+    </p>
+    <p>
+        <label for="motive" class="card-text">購入の動機</label><br>
+        <textarea class="form-control" name="motive"></textarea>
+    </p>
+    <p>
+        <label for="merit" class="card-text">よかった点</label><br>
+        <textarea class="form-control" name="merit"></textarea>
+    </p>
+    <p>
+        <label for="demerit" class="card-text">微妙な点</label><br>
+        <textarea class="form-control" name="demerit"></textarea>
+    </p>
+    <p>
+        <label for="rating" class="card-text">評価</label><br>
+        <select name="rating">
+            <option value="5">★★★★★</option>
+            <option value="4">★★★★</option>
+            <option value="3">★★★</option>
+            <option value="2">★★</option>
+            <option value="1">★</option>
+        </select>
+    </p>
+    <p>
+        <label for="file" class="card-text">写真</label><br>
         <input type="file" name="file">
-        <input class="btn btn-primary" type="submit" value="投稿">
-    </form>
+    </p>
+    <input class="btn btn-primary" type="submit" value="投稿">
+</form>
 {% endblock %}
