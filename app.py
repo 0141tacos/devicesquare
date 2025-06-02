@@ -9,7 +9,7 @@ import os
 from api import create_post, update_post, delete_post, check_favorite, add_favorite, delete_favorite, check_follow, add_follow, delete_follow
 from config import UPLOAD_FOLDER
 # dbをmodels.pyに外だししたためインポート
-from models import db, Post, User, Favorite, Follow
+from models import db, Post, User, Favorite, Follow, Category
 # apiを利用できるようにするためのインポート
 from api import init_api
 
@@ -78,7 +78,8 @@ def logout():
 @login_required
 def homepage():
     posts = Post.query.all()
-    return render_template('homepage.html', posts=posts)
+    categorys = Category.query.all()
+    return render_template('homepage.html', posts=posts, categorys=categorys)
 
 # 投稿作成画面表示のためのルーティング
 @app.route('/create', methods=['GET', 'POST'])
