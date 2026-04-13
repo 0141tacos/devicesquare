@@ -21,6 +21,11 @@ def get_posts_json():
         "post_id" : post.post_id,
         "title" : post.title,
         "body" : post.body,
+        "motive" : post.motive,
+        "merit": post.merit,
+        "demerit": post.demerit,
+        "rating": post.rating,
+        "image": post.image,
         "user_id" : post.user_id,
         "created_at" : post.created_at,
         "updated_at" : post.updated_at
